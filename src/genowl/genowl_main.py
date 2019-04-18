@@ -28,9 +28,12 @@ def parse_options(argv, progname):
     return parser.parse_args(argv)
 
 def genmodule(msg_files, srv_files, options):
+    rospack = RosPack()
     gen = generator.Generator('module', None, None)
     pkg = options.package
+    options.outdir = os.path.abspath(options.outdir)
     outfile = os.path.join(options.outdir,'%s.owl'%(pkg))
+    out_pkg = options.outdir.split('/')[-2]
     
     # add OWL.Ontology description
     ont_node = URIRef("http://www.ros.org/%s.owl"%(pkg))
@@ -38,7 +41,7 @@ def genmodule(msg_files, srv_files, options):
     
     # import ROS.owl
     rosowl_path = os.path.join(os.path.join(rospack.get_path('rosowl'), 'owl'), 'ROS.owl')
-    gen.add_triples(ont_node, [(OWL.imports,URIRef(rosowl_path))])
+    gen.add_triples(ont_node, [(OWL.imports,URIRef('file:'+rosowl_path))])
     
     # import msg and srv OWL files
     for mode,files in [('msg',msg_files), ('srv',srv_files)]:
@@ -46,7 +49,7 @@ def genmodule(msg_files, srv_files, options):
         for f in files:
             f_name = f.split('/')[-1]
             owl_name = f_name.split('.')[0]+".owl"
-            ont_file = os.path.join(outdir,owl_name).replace('/.private/','/')
+            ont_file = os.path.join(outdir,owl_name).replace('/.private/%s/'%(out_pkg),'/')
             gen.add_triples(ont_node, [(OWL.imports,URIRef('file:'+ont_file))])
     
     gen.write_graph(outfile)
@@ -78,6 +81,9 @@ def genpkg(argv, progname):
                     retcode_i = genmain_(args, progname, generator.MsgGenerator())
                 else:
                     retcode_i = genmain_(args, progname, generator.SrvGenerator())
+        
+        except OSError:
+            pass
         
         except Exception as e:
             traceback.print_exc()
@@ -111,10 +117,11 @@ def genmain_(argv, progname, gen):
             except OSError as e:
                 if not os.path.exists(options.outdir):
                     raise
+        options.outdir = os.path.abspath(options.outdir)
         
         search_path = genmsg.command_line.includepath_to_dict(options.includepath)
-        search_path['std_msgs'] = []
-        for d in rospack.get_depends_on(options.package):
+        search_path['std_msgs'] = [os.path.join(rospack.get_path('std_msgs'), 'msg')]
+        for d in rospack.get_depends(options.package, implicit=False):
             search_path[d] = [os.path.join(rospack.get_path(d), 'msg')]
         
         retcode = gen.generate_messages(options.package, args[1:], options.outdir, search_path)

@@ -170,7 +170,6 @@ class Generator(object):
         msg_context = MsgContext.create_default()
         retcode = 0
         for f in package_files:
-            print("\npackage file '%s'\n"%(f), file=sys.stderr)
             try:
                 f = os.path.abspath(f)
                 infile_name = os.path.basename(f)
