@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(genowl)
-find_package(catkin REQUIRED COMPONENTS genmsg)
+find_package(catkin REQUIRED COMPONENTS genmsg actionlib_msgs)
 
 catkin_package(
   CATKIN_DEPENDS genmsg

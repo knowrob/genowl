@@ -30,7 +30,7 @@ macro(_generate_msg_owl ARG_PKG ARG_MSG ARG_IFLAGS ARG_MSG_DEPS ARG_GEN_OUTPUT_D
     COMMENT "Generating OWL from MSG ${ARG_PKG}/${MSG_SHORT_NAME}"
     )
 
-  list(APPEND ALL_GEN_OUTPUT_FILES_py ${GEN_OUTPUT_FILE})
+  list(APPEND ALL_GEN_OUTPUT_FILES_owl ${GEN_OUTPUT_FILE})
 
 endmacro()
 
@@ -57,7 +57,7 @@ macro(_generate_srv_owl ARG_PKG ARG_SRV ARG_IFLAGS ARG_MSG_DEPS ARG_GEN_OUTPUT_D
     COMMENT "Generating Python code from SRV ${ARG_PKG}/${SRV_SHORT_NAME}"
     )
 
-  list(APPEND ALL_GEN_OUTPUT_FILES_py ${GEN_OUTPUT_FILE})
+  list(APPEND ALL_GEN_OUTPUT_FILES_owl ${GEN_OUTPUT_FILE})
 
 endmacro()
 

@@ -5,6 +5,7 @@ import os
 import sys
 import traceback
 
+from rospkg import RosPack
 import genmsg
 import genmsg.msgs
 import genmsg.msg_loader
@@ -165,7 +166,10 @@ class Generator(object):
         """
         if not genmsg.is_legal_resource_base_name(package):
             raise MsgGenerationException("\nERROR: package name '%s' is illegal and cannot be used in message generation.\nPlease see http://ros.org/wiki/Names"%(package))
-
+        
+        rospack = RosPack()
+        pkg_search_path = os.path.join(rospack.get_path(package), 'msg')
+        
         # package/src/package/msg for messages, packages/src/package/srv for services
         msg_context = MsgContext.create_default()
         retcode = 0
@@ -173,6 +177,7 @@ class Generator(object):
             try:
                 f = os.path.abspath(f)
                 infile_name = os.path.basename(f)
+                search_path[package] = [pkg_search_path, os.path.dirname(f)]
                 full_type = genmsg.gentools.compute_full_type_name(package, infile_name);
                 outfile = self.generate(msg_context, full_type, f, outdir, search_path) #actual generation
                 self.create_graph()

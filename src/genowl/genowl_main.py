@@ -107,7 +107,7 @@ def genmain_(argv, progname, gen):
     options, args = parse_options(argv,progname)
     try:
         if len(args) < 2:
-           parser.error("please specify args")
+           print("ERROR: please specify args")
         if not os.path.exists(options.outdir):
             # This script can be run multiple times in parallel. We
             # don't mind if the makedirs call fails because somebody
